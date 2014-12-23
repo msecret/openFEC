@@ -133,6 +133,10 @@ ALTER TABLE public.facthousesenate_f3 ADD FOREIGN KEY (electiontp_sk) REFERENCES
 ALTER TABLE public.factpacsandparties_f3x ADD FOREIGN KEY (electiontp_sk) REFERENCES public.dimelectiontp (electiontp_sk);
 ALTER TABLE public.factpresidential_f3p ADD FOREIGN KEY (electiontp_sk) REFERENCES public.dimelectiontp (electiontp_sk);
 
+ALTER TABLE public.facthousesenate_f3 ADD FOREIGN KEY (reporttype_sk) REFERENCES public.dimreporttype (reporttype_sk);
+ALTER TABLE public.factpacsandparties_f3x ADD FOREIGN KEY (reporttype_sk) REFERENCES public.dimreporttype (reporttype_sk);
+ALTER TABLE public.factpresidential_f3p ADD FOREIGN KEY (reporttype_sk) REFERENCES public.dimreporttype (reporttype_sk);
+
 ALTER TABLE public.factpresidential_f3p ADD FOREIGN KEY (reporttype_sk) REFERENCES public.dimreporttype (reporttype_sk);
 ALTER TABLE public.factpacsandparties_f3x ADD FOREIGN KEY (reporttype_sk) REFERENCES public.dimreporttype (reporttype_sk);
 

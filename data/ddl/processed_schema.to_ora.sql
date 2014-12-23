@@ -11,7 +11,7 @@ CREATE FOREIGN TABLE processed_fec.cand_status_ici (
     etl_complete_date date,
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'cand_status_ici');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'CAND_STATUS_ICI');
 
 
 
@@ -137,7 +137,7 @@ CREATE FOREIGN TABLE processed_fec.form_1 (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_1');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_1');
 
 
 
@@ -187,7 +187,7 @@ CREATE FOREIGN TABLE processed_fec.form_10 (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_10');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_10');
 
 
 
@@ -253,7 +253,7 @@ CREATE FOREIGN TABLE processed_fec.form_11 (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_11');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_11');
 
 
 
@@ -310,7 +310,7 @@ CREATE FOREIGN TABLE processed_fec.form_12 (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_12');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_12');
 
 
 
@@ -429,7 +429,7 @@ CREATE FOREIGN TABLE processed_fec.form_1m (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_1m');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_1M');
 
 
 
@@ -488,7 +488,7 @@ CREATE FOREIGN TABLE processed_fec.form_1s (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_1s');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_1S');
 
 
 
@@ -547,7 +547,7 @@ CREATE FOREIGN TABLE processed_fec.form_2 (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_2');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_2');
 
 
 
@@ -582,7 +582,7 @@ CREATE FOREIGN TABLE processed_fec.form_24 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_24');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_24');
 
 
 
@@ -612,7 +612,7 @@ CREATE FOREIGN TABLE processed_fec.form_2s (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_2s');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_2S');
 
 
 
@@ -740,7 +740,7 @@ CREATE FOREIGN TABLE processed_fec.form_3 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3');
 
 
 
@@ -794,7 +794,7 @@ CREATE FOREIGN TABLE processed_fec.form_3l (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_31');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_31');
 
 
 
@@ -1018,7 +1018,7 @@ CREATE FOREIGN TABLE processed_fec.form_3p (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3p');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3P');
 
 
 
@@ -1073,7 +1073,7 @@ CREATE FOREIGN TABLE processed_fec.form_3p_line_31s (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3p_line_31s');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3P_LINE_31S');
 
 
 
@@ -1184,7 +1184,7 @@ CREATE FOREIGN TABLE processed_fec.form_3ps (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3ps');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3PS');
 
 
 
@@ -1241,7 +1241,7 @@ CREATE FOREIGN TABLE processed_fec.form_3s (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3s');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3S');
 
 
 
@@ -1386,7 +1386,7 @@ CREATE FOREIGN TABLE processed_fec.form_3x (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3x');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3X');
 
 
 
@@ -1442,7 +1442,7 @@ CREATE FOREIGN TABLE processed_fec.form_3z (
     record_ind character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_3z');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_3Z');
 
 
 
@@ -1548,7 +1548,7 @@ CREATE FOREIGN TABLE processed_fec.form_4 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_4');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_4');
 
 
 
@@ -1601,7 +1601,7 @@ CREATE FOREIGN TABLE processed_fec.form_5 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_5');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_5');
 
 
 
@@ -1645,7 +1645,7 @@ CREATE FOREIGN TABLE processed_fec.form_6 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_6');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_6');
 
 
 
@@ -1690,7 +1690,7 @@ CREATE FOREIGN TABLE processed_fec.form_7 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_7');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_7');
 
 
 
@@ -1748,7 +1748,7 @@ CREATE FOREIGN TABLE processed_fec.form_8 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_8');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_8');
 
 
 
@@ -1808,7 +1808,7 @@ CREATE FOREIGN TABLE processed_fec.form_9 (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_9');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_9');
 
 
 
@@ -1847,7 +1847,7 @@ CREATE FOREIGN TABLE processed_fec.form_99_misc (
     mrf_rec character(1),
     load_date date NOT NULL,
     update_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'form_99_misc');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'FORM_99_MISC');
 
 
 
@@ -1869,7 +1869,7 @@ CREATE FOREIGN TABLE processed_fec.log_audit_dml (
     elapsed_minutes numeric(8,4),
     start_cpu_time numeric NOT NULL,
     start_clock_time numeric NOT NULL
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'log_audit_dml');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'LOG_AUDIT_DML');
 
 
 
@@ -1889,7 +1889,7 @@ CREATE FOREIGN TABLE processed_fec.log_audit_module (
     elapsed_minutes numeric(8,4),
     start_cpu_time numeric NOT NULL,
     start_clock_time numeric NOT NULL
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'log_audit_module');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'LOG_AUDIT_MODULE');
 
 
 
@@ -1911,7 +1911,7 @@ CREATE FOREIGN TABLE processed_fec.log_audit_process (
     elapsed_minutes numeric(8,4),
     start_cpu_time numeric NOT NULL,
     start_clock_time numeric NOT NULL
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'log_audit_process');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'LOG_AUDIT_PROCESS');
 
 
 
@@ -1940,7 +1940,7 @@ CREATE FOREIGN TABLE processed_fec.log_dml_errors (
     cand_id character varying(100),
     sub_id character varying(100),
     load_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'log_dml_errors');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'LOG_DML_ERRORS');
 
 
 
@@ -1954,7 +1954,7 @@ CREATE FOREIGN TABLE processed_fec.ref_cand_ici (
     cand_ici_desc character varying(100),
     incumbent_flg character(1),
     open_flg character(1)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_cand_ici');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_CAND_ICI');
 
 
 
@@ -1966,7 +1966,7 @@ CREATE FOREIGN TABLE processed_fec.ref_cand_ici (
 CREATE FOREIGN TABLE processed_fec.ref_cand_status (
     cand_status_cd character(1) NOT NULL,
     cand_status_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_cand_status');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_CAND_STATUS');
 
 
 
@@ -1978,7 +1978,7 @@ CREATE FOREIGN TABLE processed_fec.ref_cand_status (
 CREATE FOREIGN TABLE processed_fec.ref_cmte_dsgn (
     cmte_dsgn character(1) NOT NULL,
     cmte_dsgn_desc character varying(90)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_cmte_dsgn');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_CMTE_DSGN');
 
 
 
@@ -1991,7 +1991,7 @@ CREATE FOREIGN TABLE processed_fec.ref_cmte_type (
     cmte_tp character(1) NOT NULL,
     cmte_tp_desc character varying(90),
     explanation character varying(1000)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_cmte_type');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_CMTE_TYPE');
 
 
 
@@ -2003,7 +2003,7 @@ CREATE FOREIGN TABLE processed_fec.ref_cmte_type (
 CREATE FOREIGN TABLE processed_fec.ref_election (
     election_tp character(1) NOT NULL,
     election_tp_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_election');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_ELECTION');
 
 
 
@@ -2015,7 +2015,7 @@ CREATE FOREIGN TABLE processed_fec.ref_election (
 CREATE FOREIGN TABLE processed_fec.ref_entity_type (
     entity_tp character varying(3) NOT NULL,
     entity_tp_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_entity_type');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_ENTITY_TYPE');
 
 
 
@@ -2030,7 +2030,7 @@ CREATE FOREIGN TABLE processed_fec.ref_form_type (
     form_nm character varying(1000),
     obsolete_flg character(1) DEFAULT 'N'::bpchar,
     obsolete_date date
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_form_type');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_FORM_TYPE');
 
 
 
@@ -2042,7 +2042,7 @@ CREATE FOREIGN TABLE processed_fec.ref_form_type (
 CREATE FOREIGN TABLE processed_fec.ref_office (
     office_tp character(1) NOT NULL,
     office_tp_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_office');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_OFFICE');
 
 
 
@@ -2054,7 +2054,7 @@ CREATE FOREIGN TABLE processed_fec.ref_office (
 CREATE FOREIGN TABLE processed_fec.ref_org_type (
     org_tp character(1) NOT NULL,
     org_tp_desc character varying(90)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_org_type');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_ORG_TYPE');
 
 
 
@@ -2066,7 +2066,7 @@ CREATE FOREIGN TABLE processed_fec.ref_org_type (
 CREATE FOREIGN TABLE processed_fec.ref_party (
     party_cd character varying(3) NOT NULL,
     party_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_party');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_PARTY');
 
 
 
@@ -2078,7 +2078,7 @@ CREATE FOREIGN TABLE processed_fec.ref_party (
 CREATE FOREIGN TABLE processed_fec.ref_report_type (
     rpt_tp character varying(3) NOT NULL,
     rpt_tp_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_report_type');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_REPORT_TYPE');
 
 
 
@@ -2090,7 +2090,7 @@ CREATE FOREIGN TABLE processed_fec.ref_report_type (
 CREATE FOREIGN TABLE processed_fec.ref_state (
     state_cd character varying(2) NOT NULL,
     state_nm character varying(90)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_state');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_STATE');
 
 
 
@@ -2102,7 +2102,7 @@ CREATE FOREIGN TABLE processed_fec.ref_state (
 CREATE FOREIGN TABLE processed_fec.ref_transaction_code (
     transaction_cd character varying(3) NOT NULL,
     transaction_desc character varying(100)
-) SERVER oradb OPTIONS (schema 'PROCESSED', table 'ref_transaction_code');
+) SERVER oradb OPTIONS (schema 'PROCESSED', table 'REF_TRANSACTION_CODE');
 
 
 

@@ -59,9 +59,9 @@ from psycopg2._range import DateTimeRange
 
 from . import decoders
 from .candidate.models import Candidate
-from .candidate.resources import CandidateFormatMixin
+from .candidate.resources import CandidateResource, CandidateSearch
 from .db import db_conn
-from .resources import default_year, Searchable, SingleResource
+from .resources import default_year, natural_number, Searchable, SingleResource
 
 speedlogger = logging.getLogger('speed')
 speedlogger.setLevel(logging.CRITICAL)
@@ -74,11 +74,6 @@ api = restful.Api(app)
 
 
 
-def natural_number(n):
-    result = int(n)
-    if result < 1:
-        raise reqparse.ArgumentTypeError('Must be a number greater than or equal to 1')
-    return result
 
 
 
@@ -344,112 +339,6 @@ def format_totals(self, data, page_data, fields, default_year):
 
         results.append(com[committee_id])
     return {'api_version':"0.2", 'pagination':page_data, 'results': results}
-
-
-class CandidateResource(CandidateFormatMixin, SingleResource, Candidate):
-
-    parser = reqparse.RequestParser()
-    parser.add_argument('fields',
-        type=str,
-        help='Choose the fields that are displayed'
-    )
-    parser.add_argument(
-        'year',
-        type=str,
-        default= default_year(),
-        help="Year in which a candidate runs for office"
-    )
-
-
-class CandidateSearch(CandidateFormatMixin, Searchable, Candidate):
-
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        'q',
-        type=str,
-        help='Text to search all fields for'
-    )
-    parser.add_argument(
-        'candidate_id',
-        type=str,
-        help="Candidate's FEC ID"
-    )
-    parser.add_argument(
-        'fec_id',
-        type=str,
-        help="Candidate's FEC ID"
-    )
-    parser.add_argument(
-        'page',
-        type=natural_number,
-        default=1,
-        help='For paginating through results, starting at page 1'
-    )
-    parser.add_argument(
-        'per_page',
-        type=natural_number,
-        default=20,
-        help='The number of results returned per page. Defaults to 20.'
-    )
-    parser.add_argument(
-        'name',
-        type=str,
-        help="Candidate's name (full or partial)"
-    )
-    parser.add_argument(
-        'office',
-        type=str,
-        help='Governmental office candidate runs for'
-    )
-    parser.add_argument(
-        'state',
-        type=str,
-        help='U. S. State candidate is registered in'
-    )
-    parser.add_argument(
-        'party',
-        type=str,
-        help="Party under which a candidate ran for office"
-    )
-    parser.add_argument(
-        'year',
-        type=str,
-        default= default_year(),
-        help="Year in which a candidate runs for office"
-    )
-    parser.add_argument(
-        'fields',
-        type=str,
-        help='Choose the fields that are displayed'
-    )
-    parser.add_argument(
-        'district',
-        type=int,
-        help='Two digit district number'
-    )
-
-
-    field_name_map = {"candidate_id": string.Template("cand_id='$arg'"),
-                    "fec_id": string.Template("cand_id='$arg'"),
-                    "office": string.Template(
-                        "top(dimcandoffice.sort(expire_date-)).dimoffice.office_tp~'$arg'"
-                    ),
-                    "district":string.Template(
-                        "top(dimcandoffice.sort(expire_date-)).dimoffice.office_district={'$arg', '0$arg'}"
-                    ),
-                    "state": string.Template(
-                        "top(dimcandoffice.sort(expire_date-)).dimoffice.office_state~'$arg'"
-                    ),
-                    "name": string.Template(
-                        "top(dimcandproperties.sort(expire_date-)).cand_nm~'$arg'"
-                    ),
-                    "party": string.Template(
-                        "top(dimcandoffice.sort(expire_date-)).dimparty.party_affiliation~'$arg'"
-                    ),
-                    "year": string.Template(
-                        "exists(dimcandoffice)"
-                    ),
-    }
 
 
 class NameSearch(Searchable):

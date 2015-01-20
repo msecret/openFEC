@@ -1,7 +1,6 @@
 import copy
 from datetime import datetime
 import logging
-import re
 import time
 
 from flask.ext import restful
@@ -22,6 +21,14 @@ class FindFieldsMixin(object):
             return args['fields'].split(',')
         else:
             return [args['fields']]
+
+
+def natural_number(n):
+    result = int(n)
+    if result < 1:
+        raise reqparse.ArgumentTypeError(
+            'Must be a number greater than or equal to 1')
+    return result
 
 
 def as_dicts(data):

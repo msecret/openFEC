@@ -1,3 +1,7 @@
+# In theory, these are the steps run to configure a new machine to host
+# the openFEC webservices.  Much cleanup is needed and probably conversion
+# to something more systematic, like a Chef recipe.
+
 wget http://nginx.org/keys/nginx_signing.key
 sudo apt-key add nginx_signing.key
 echo "deb http://nginx.org/packages/mainline/ubuntu/ precise nginx

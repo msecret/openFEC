@@ -1,6 +1,6 @@
-##
-# Test vhost
-##
+# nginx config for openFEC webserver.
+# Put it in place by running:
+# sudo cp /usr/local/home/$CURRENT_USER/openFEC/webservices/setup/nginx_conf_default /etc/nginx/vhosts/default.conf
 
 # HTTP server
 server {

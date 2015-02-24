@@ -29,7 +29,6 @@ def scrape_house_senate_results(sheet):
     for row in rows(sheet):
         yield row
 
-
 def scrape_xls(req):
     book = xlrd.open_workbook(file_contents=req.content)
     dispatch = {
@@ -38,20 +37,23 @@ def scrape_xls(req):
     }
     for sheet in book.sheets():
         name = sheet.name.lower()
+        print name
         for k, v in dispatch.items():
             if k in name:
                 return v(sheet)
     raise ValueError("Unhandled workbook")
 
 
-def scrape_html(page):
+def scrape_html(page, year):
+    results = []
     for spreadsheet in page.xpath(
-        "//a[contains(@href, 'congresults') "
+        "//a[contains(@href, 'results') "
             "and contains(@href, '.xls')]/@href"
     ):
         data = requests.get(spreadsheet)
         for x in scrape_xls(data):
-            yield x
+            results.append(x)
+    yield {'results': results, 'election_year': year}
 
 
 def save(data):
@@ -67,9 +69,11 @@ def scrape():
 
     lib = lxmlize(LIBRARY)
     for page in set(lib.xpath("//a[contains(@href, 'federalelections')]/@href")):
+        year = page[28:32]
+        # I am pretty sure the pdfs don't have additional information
         if page.endswith(".pdf"):
             continue  # XXX: Write a PDF parser
-        save(scrape_html(lxmlize(page)))
+        save(scrape_html(lxmlize(page), int(year)))
 
 
 if __name__ == "__main__":

@@ -9,15 +9,20 @@ def load_house_senate(data):
     year = data['election_year']
     print year
 
+    districts = []
     everything = []
+    candidates = []
+    test = {}
 
     for line in results:
         kind = None
         for key in line:
             # identifying individual results
-            if 'LAST' in key:
-                if not line[key] != '':
+            candidate_listing = ['CANDIDATE NAME', 'CANDIDATE NAME (Last, First)','LAST NAME, FIRST']
+            if key in candidate_listing:
+                if line[key] :
                     kind = 'candidate'
+                    candidate_key = key
 
             # identifying totals
             elif "TOTAL" in key:
@@ -32,37 +37,37 @@ def load_house_senate(data):
                         kind = 'district'
                         real_district_key = key
 
-
                     # party totals
                     if 'PARTY' in line[key].upper():
                         kind = 'party total'
 
 
 
+        # needed for the different categories
+        state = line['STATE']
+        if 'DISTRICT' in line:
+            district = line['DISTRICT']
+        else:
+            district = line['D']
+
+        if 'PRIMARY VOTES' in line:
+            primary = line['PRIMARY VOTES']
+        if 'PRIMARY' in line:
+            primary = line['PRIMARY']
+
+
+        if 'GENERAL VOTES ' in line:
+            general = line['GENERAL VOTES ']
+        if 'GENERAL VOTES' in line:
+            general = line['GENERAL VOTES']
+        if 'GENERAL' in line:
+            general = line['GENERAL']
+        if 'GENERAL ' in line:
+            general = line['GENERAL ']
+
         if kind == 'district':
             # print year
             # print line['TOTAL VOTES']
-            state = line['STATE']
-            if 'DISTRICT' in line:
-                district = line['DISTRICT']
-            else:
-                district = line['D']
-
-
-            if 'PRIMARY VOTES' in line:
-                primary = line['PRIMARY VOTES']
-            if 'PRIMARY' in line:
-                primary = line['PRIMARY']
-
-
-            if 'GENERAL VOTES ' in line:
-                general = line['GENERAL VOTES ']
-            if 'GENERAL VOTES' in line:
-                general = line['GENERAL VOTES']
-            if 'GENERAL' in line:
-                general = line['GENERAL']
-            if 'GENERAL ' in line:
-                general = line['GENERAL ']
             district = {
                 'state': state,
                 'district': district,
@@ -70,10 +75,28 @@ def load_house_senate(data):
                 'primary': primary,
                 'year':year
             }
-            everything.append(district)
+            districts.append(district)
+
+        if kind == 'candidate':
+            candidate = {
+                'name': line[candidate_key],
+                'state': state,
+                'district': district,
+                'general': general,
+                'primary': primary,
+                'year':year
+            }
+            test[year] = candidate
+            candidates.append(candidate)
+
+
+
+
 
     # testing
-    print everything
+    # everything.append(districts)
+    # everything.append(candidates)
+    print test
 
 
 for file_name in glob.glob("data/*.json"):

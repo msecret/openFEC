@@ -9,6 +9,8 @@ def load_house_senate(data):
     year = data['election_year']
     print year
 
+    everything = []
+
     for line in results:
         kind = None
         for key in line:
@@ -25,10 +27,11 @@ def load_house_senate(data):
                         kind = 'state'
 
                     # district totals
-                    if 'DISTRICT' in line[key].upper():
+                    # in 2012 it is just D
+                    if 'DISTRICT' in line[key].upper() or 'D' == line[key]:
                         kind = 'district'
-                        real_key = key
-                        print
+                        real_district_key = key
+
 
                     # party totals
                     if 'PARTY' in line[key].upper():
@@ -37,15 +40,40 @@ def load_house_senate(data):
 
 
         if kind == 'district':
-            print line
-            print line[real_key]
-            print year
-            print line['TOTAL VOTES']
-            print {'primary': line['PRIMARY']}
-            print {'general': line['GENERAL']}
+            # print year
+            # print line['TOTAL VOTES']
+            state = line['STATE']
+            if 'DISTRICT' in line:
+                district = line['DISTRICT']
+            else:
+                district = line['D']
 
 
+            if 'PRIMARY VOTES' in line:
+                primary = line['PRIMARY VOTES']
+            if 'PRIMARY' in line:
+                primary = line['PRIMARY']
 
+
+            if 'GENERAL VOTES ' in line:
+                general = line['GENERAL VOTES ']
+            if 'GENERAL VOTES' in line:
+                general = line['GENERAL VOTES']
+            if 'GENERAL' in line:
+                general = line['GENERAL']
+            if 'GENERAL ' in line:
+                general = line['GENERAL ']
+            district = {
+                'state': state,
+                'district': district,
+                'general': general,
+                'primary': primary,
+                'year':year
+            }
+            everything.append(district)
+
+    # testing
+    print everything
 
 
 for file_name in glob.glob("data/*.json"):

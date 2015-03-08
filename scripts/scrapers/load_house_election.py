@@ -4,15 +4,15 @@ import glob
 
 import json
 
+everything = []
+
 def load_house_senate(data):
+    candidates = []
+    districts = []
+    h_candidates = []
+    s_candidates = []
     results = data['results']
     year = data['election_year']
-    print year
-
-    districts = []
-    everything = []
-    candidates = []
-    test = {}
 
     for line in results:
         kind = None
@@ -20,7 +20,9 @@ def load_house_senate(data):
             # identifying individual results
             candidate_listing = ['CANDIDATE NAME', 'CANDIDATE NAME (Last, First)','LAST NAME, FIRST']
             if key in candidate_listing:
-                if line[key] :
+                if 'DISTRICT' in line[key].upper():
+                    pass # these are titles
+                elif line[key]:
                     kind = 'candidate'
                     candidate_key = key
 
@@ -66,8 +68,6 @@ def load_house_senate(data):
             general = line['GENERAL ']
 
         if kind == 'district':
-            # print year
-            # print line['TOTAL VOTES']
             district = {
                 'state': state,
                 'district': district,
@@ -81,22 +81,33 @@ def load_house_senate(data):
             candidate = {
                 'name': line[candidate_key],
                 'state': state,
-                'district': district,
                 'general': general,
                 'primary': primary,
                 'year':year
             }
-            test[year] = candidate
-            candidates.append(candidate)
 
+            if type(district) == unicode and "S" in district:
+                candidate['office'] = 'Senate'
+                s_candidates.append(candidate)
+                candidates.append(candidate)
+            else:
+                if district == 'H':
+                    # total votes for a house in a Pennsylvania in 2008
+                    pass
+                else:
+                    if district and len(str(district)) > 2:
+                        district = str(district)[:2]
+                    candidate['district'] = int(district)
 
-
+                    candidate['office'] = 'House'
+                    h_candidates.append(candidate)
+                    candidates.append(candidate)
 
 
     # testing
-    # everything.append(districts)
-    # everything.append(candidates)
-    print test
+    everything.append(districts)
+    everything.append(h_candidates)
+    everything.append(s_candidates)
 
 
 for file_name in glob.glob("data/*.json"):
@@ -105,5 +116,6 @@ for file_name in glob.glob("data/*.json"):
     data = json.load(json_data)
     load_house_senate(data)
 
+# print everything
 
 

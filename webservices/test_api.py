@@ -11,20 +11,19 @@ class OverallTest(ApiBaseTest):
         self.assertIn('api_version', response)
         self.assertIn('pagination', response)
 
-
     def _results(self, qry):
         response = self._response(qry)
         return response['results']
 
     def test_full_text_search(self):
         # changed from 'james' to 'arnold' because 'james' falls victim to stemming, and some results return 'jame' causing the assert to fail
-        results = self._results('/candidate?q=arnold&fields=*')
+        results = self._results('/candidate?q=arnold')
         for r in results:
             #txt = json.dumps(r).lower()
             self.assertIn('arnold', r['name'].lower())
 
     def test_full_text_search_with_whitespace(self):
-        results = self._results('/candidate?q=barack obama&fields=*')
+        results = self._results('/candidate?q=barack obama')
         for r in results:
             txt = json.dumps(r).lower()
             self.assertIn('obama', txt)
@@ -34,9 +33,9 @@ class OverallTest(ApiBaseTest):
         self.assertEquals(results, [])
 
     def test_year_filter(self):
-        results = self._results('/candidate?year=1988&fields=*')
+        results = self._results('/candidate?year=1988')
         for r in results:
-            self.assertEqual(r.get('active_through'), 1988)
+            self.assertIn(1988, r['election_years'])
 
     def test_per_page_defaults_to_20(self):
         results = self._results('/candidate')
@@ -65,42 +64,35 @@ class OverallTest(ApiBaseTest):
     def test_fields(self):
         # testing key defaults
         response = self._results('/candidate/P80003338?year=2008')
-        response= response[0]
+        response = response[0]
 
-        self.assertEquals(response['name']['full_name'], 'OBAMA, BARACK')
+        self.assertEquals(response['name'], 'OBAMA, BARACK')
 
-        fields = ('party_affiliation', 'primary_committee', 'state', 'district', 'incumbent_challenge_full', 'incumbent_challenge', 'candidate_status', 'office_sought', 'election_year', 'primary_committee')
+        fields = ('party', 'party_full', 'state', 'district', 'incumbent_challenge_full', 'incumbent_challenge', 'candidate_status', 'candidate_status_full', 'office', 'active_through')
 
-        election = response['elections'][0]
         for field in fields:
             print field
-            print election[field]
-            self.assertEquals(election.has_key(field), True)
-
-        # not in default fields
-        self.assertEquals(response['elections'][0].has_key('affiliated_committees'), False)
-        self.assertEquals(response.has_key('mailing_addresses'), False)
-        # making sure primary committee is in the right bucket
-        self.assertEquals(response['elections'][0]['primary_committee']['designation'], 'P')
+            print response[field]
+            self.assertEquals(response.has_key(field), True)
 
     def test_extra_fields(self):
-        response = self._results('/candidate/P80003338?fields=mailing_addresses,affiliated_committees')
-        self.assertIn('C00434357', [c['committee_id'] for c in response[0]['elections'][0]['affiliated_committees']])
-        self.assertIn('233 NORTH MICHIGAN AVE STE 1720', [a['street_1'] for a in response[0]['mailing_addresses']])
-        self.assertEquals(response[0].has_key('candidate_id'), False)
-        self.assertEquals(response[0].has_key('name'), False)
+        response = self._results('/candidate/P80003338?year=2008')
+        self.assertIn('committees', response[0])
+        self.assertIn('PO BOX 8102', response[0]['address_street_1'])
+        self.assertIn('60680',response[0]['address_zip'])
+        # testing for year sensitivity
+        self.assertIn('O', response[0]['incumbent_challenge'])
 
     def test_candidate_committes(self):
-        response = self._results('/candidate/P80003338?fields=affiliated_committees')
+        response = self._results('/candidate/P80003338?year=*')
 
-        fields = ('committee_id', 'designation', 'designation_full', 'type', 'type_full', 'election_year', 'committee_name')
+        fields = ('committee_id', 'committee_designation', 'committee_designation_full', 'committee_type', 'committee_type_full', 'committee_name')
 
-        election = response[0]['elections'][0]
+        election = response[0]['committees'][0]
         print election
         for field in fields:
             print field
-            self.assertEquals(election['primary_committee'].has_key(field), True)
-            self.assertEquals(election['affiliated_committees'][0].has_key(field), True)
+            self.assertEquals(election.has_key(field), True)
 
     @unittest.skip("Year aggregation needs to be implemented.")
     def test_years_all(self):
@@ -123,16 +115,6 @@ class OverallTest(ApiBaseTest):
         # testing single resource
         response = self._results('/candidate/P80003338?year=2012,2008')
         elections = response[0]['elections']
-        self.assertEquals(len(elections), 2)
-
-    def test_year_default(self):
-        # we are currently defaulting to last 4 years
-        # also the test data is weird but it should still work for this purpose
-        results = self._results('/candidate/H0VA08040')
-        self.assertNotIn('elections', results)
-
-        results = self._results('/candidate/H0VA08040?year=1996,1998')
-        elections = results[0]['elections']
         self.assertEquals(len(elections), 2)
 
     def test_cand_filters(self):
@@ -169,17 +151,11 @@ class OverallTest(ApiBaseTest):
         self.assertEqual(len(cmte_ids), len(set(cmte_ids)))
 
 
-### not ready for this yet
-    # def test_q_ids(self):
-    #     response = self._response('/committee?q=C00000851')
-    #     self.assertEquals(len(response['results']), 1)
-    #     response = self._response('/candidate?q=H4DC00092')
-    #     self.assertEquals(len(response['results']), 1)
 
-#Committee
-    def test_committee_search_fields(self):
+    ## Committee ##
+    def test_committee_list_fields(self):
         # example with committee
-        response = self._response('/committee?committee_id=C00048587&year=*')
+        response = self._response('/committee?committee_id=C00048587')
         result = response['results'][0]
         # main fields
         # original registration date doesn't make sense in this example, need to look into this more
@@ -199,13 +175,50 @@ class OverallTest(ApiBaseTest):
         # candidate fields
         candidate_result = response['results'][0]['candidates'][0]
         self.assertEqual(candidate_result['candidate_id'], 'P60000247')
-        self.assertEqual(candidate_result['election_year'], 1976)
+        self.assertEqual(candidate_result['candidate_name'], 'CARTER, JIMMY')
+        self.assertEqual(candidate_result['active_through'], 1976)
         self.assertEqual(candidate_result['link_date'], '2007-10-12 13:38:33')
         # Example with org type
         response = self._response('/committee?organization_type=C')
         results = response['results'][0]
         self.assertEqual(results['organization_type_full'], 'Corporation')
         self.assertEqual(results['organization_type'], 'C')
+
+    def test_committee_detail_fields(self):
+        response = self._response('/committee/C00048587')
+        result = response['results'][0]
+        # main fields
+        self.assertEqual(result['original_registration_date'], '1982-12-31 00:00:00')
+        self.assertEqual(result['committee_type'], 'P')
+        self.assertEqual(result['treasurer_name'], 'ROBERT J. LIPSHUTZ')
+        self.assertEqual(result['party'], 'DEM')
+        self.assertEqual(result['committee_type_full'], 'Presidential')
+        self.assertEqual(result['name'], '1976 DEMOCRATIC PRESIDENTIAL CAMPAIGN COMMITTEE, INC. (PCC-1976 GENERAL ELECTION)')
+        self.assertEqual(result['committee_id'], 'C00048587')
+        self.assertEqual(result['designation_full'], 'Principal campaign committee')
+        self.assertEqual(result['state'], 'GA')
+        self.assertEqual(result['party_full'], 'Democratic Party')
+        self.assertEqual(result['designation'], 'P')
+        # no expired committees in test data to test just checking it exists
+        self.assertEqual(result['expire_date'], None)
+        # candidate fields
+        candidate_result = response['results'][0]['candidates'][0]
+        self.assertEqual(candidate_result['candidate_id'], 'P60000247')
+        self.assertEqual(candidate_result['candidate_name'], 'CARTER, JIMMY')
+        self.assertEqual(candidate_result['active_through'], 1976)
+        self.assertEqual(candidate_result['link_date'], '2007-10-12 13:38:33')
+        # Things on the detailed view
+        self.assertEqual(result['filing_frequency'], 'T')
+        self.assertEqual(result['form_type'], 'F1Z')
+        self.assertEqual(result['load_date'], '1982-12-31 00:00:00')
+        self.assertEqual(result['street_1'], '1795 PEACHTREE ROAD , NE')
+        self.assertEqual(result['zip'], '30309')
+        # Example with org type
+        response = self._response('/committee?organization_type=C')
+        results = response['results'][0]
+        self.assertEqual(results['organization_type_full'], 'Corporation')
+        self.assertEqual(results['organization_type'], 'C')
+
 
     def test_committee_search_double_committee_id(self):
         response = self._response('committee?committee_id=C00048587,C00116574&year=*')
@@ -241,66 +254,9 @@ class OverallTest(ApiBaseTest):
         self.assertEquals((original_count > state_count), True)
 
 
-
-    def test_committee_cand_fields(self):
-        # they were giving different responses
-        response_1 = self._response('/committee/C00000851')
-        result_1 = response_1['results'][0]['candidates'][0]
-
-        fields = ('candidate_id', 'candidate_name', 'office_sought', 'designation', 'designation_full', 'election_years', 'expire_date', 'link_date', 'type', 'type_full')
-        for field in fields:
-            print field
-            self.assertEquals(result_1.has_key(field), True)
-
-    def test_committee_stats(self):
-        response = self._response('/committee/C00000851')
-        results = response['results']
-
-        result = results[0]['status']
-        fields = ('designation','designation_full', 'expire_date','load_date', 'receipt_date', 'type', 'type_full')
-        for field in fields:
-            print field
-            self.assertEquals(result.has_key(field), True)
-
-    def test_committee_properties_basic(self):
-        response = self._response('/committee/C00000851')
-        result = response['results'][0]
-
-        fields = ('committee_id','expire_date','form_type','load_date','name','description','status', 'address')
-        for field in fields:
-            print field
-            self.assertEquals(result.has_key(field), True)
-
-        # Not a default field
-        self.assertEquals(result.has_key('archive'), False)
-
-    def test_committee_properties_all(self):
-        response = self._response('/committee/C00000422?fields=*')
-        result = response['results'][0]['archive']
-
-        print result
-
-        description_fields = ('form_type','expire_date','filing_frequency','load_date')
-        for field in description_fields:
-            print field
-            self.assertEquals(result['description'][0].has_key(field), True)
-
-        address_fields = ('city', 'state', 'state_full', 'street_1', 'zip', 'expire_date')
-        for field in address_fields:
-            print field
-            self.assertEquals(response['results'][0]['address'].has_key(field), True)
-
-        self.assertEquals(response['results'][0]['treasurer'].has_key('name_full'), True)
-        self.assertEquals(response['results'][0]['treasurer'].has_key('expire_date'), True)
-
     def test2committees(self):
         response = self._results('/committee/C00484188?year=2012')
         self.assertEquals(len(response[0]['candidates']), 2)
-
-    def test_committee_field_filtering(self):
-        response = self._results('/committee/C00000851?fields=committee_id')
-        print '\n%s\n' % response
-        self.assertEquals(len(response[0]), 1)
 
     # /committee?
     def test_err_on_unsupported_arg(self):
@@ -312,15 +268,12 @@ class OverallTest(ApiBaseTest):
         self.assertEquals(response[0]['party'], 'REP')
         self.assertEquals(response[0]['party_full'], 'Republican Party')
 
-    @unittest.skip('need to re-implement candidate filtering on another endpoint')
     def test_committee_filters(self):
         org_response = self._response('/committee')
         original_count = org_response['pagination']['count']
 
         # checking one example from each field
         filter_fields = (
-            ('candidate_id', 'H0VA08040'),
-            ('candidate_id', 'H0VA08040,P80003338'),
             ('committee_id', 'C00484188,C00000422'),
             ('state', 'CA,DC'),
             ('name', 'Obama'),
@@ -340,10 +293,37 @@ class OverallTest(ApiBaseTest):
             response = self._response(page)
             self.assertGreater(original_count, response['pagination']['count'])
 
+    def test_committees_by_cand_id(self):
+        results =  self._results('/candidate/P60000247/committees')
+
+        ids = [x['committee_id'] for x in results]
+
+        self.assertIn('C00048587', ids)
+        self.assertIn('C00111245', ids)
+        self.assertIn('C00108407', ids)
+
+    def test_committee_by_cand_filter(self):
+        results =  self._results('/candidate/P60000247/committees?designation=P')
+        self.assertEquals(1, len(results))
+
+    def test_committee_by_cand(self):
+        results =  self._results('http://localhost:5000/candidate/P60000247/committees?year=*')
+        self.assertEquals(3, len(results))
+
+    def test_canditites_by_com(self):
+        results =  self._results('/committee/C00111245/candidates?year=*')
+        self.assertEquals(1, len(results))
+
+    @unittest.skip('This is not a great view anymore')
+    def test_multiple_cmtes_in_detail(self):
+        response = self._results('http://localhost:5000/candidate/P80003338/committees')
+        self.assertEquals(len(response[0]), 11)
+        self.assertEquals(response['pagination']['count'], 11)
 
 # Totals
+    @unittest.skip("not implemented yet")
     def test_reports_house_senate(self):
-        results = self._results('/total/C00002600')
+        results = self._results('/committee/C00002600/reports')
 
         fields = ('beginning_image_number', 'end_image_number', 'expire_date', 'load_date','report_type', 'report_type_full','report_year', 'type', 'cash_on_hand_beginning_period', 'cash_on_hand_end_period', 'debts_owed_by_committee', 'debts_owed_to_committee', 'operating_expenditures_period', 'other_political_committee_contributions_period', 'refunds_other_political_committee_contributions_period', 'total_disbursements_period', 'total_individual_contributions_period', 'total_receipts_period',)
 
@@ -351,8 +331,9 @@ class OverallTest(ApiBaseTest):
             print field
             self.assertEquals(results[0]['reports'][0].has_key(field), True)
 
+    @unittest.skip("not implemented yet")
     def test_reports_pac_party(self):
-        results = self._results('/total/C00000422')
+        results = self._results('/committee/C00000422/reports')
 
         fields = ('beginning_image_number', 'end_image_number', 'expire_date', 'load_date', 'report_type', 'report_type_full', 'report_year', 'total_disbursements_period', 'total_disbursements_summary_page_period', 'total_receipts_period', 'total_receipts_summary_page_period', 'type')
 
@@ -360,8 +341,9 @@ class OverallTest(ApiBaseTest):
             print field
             self.assertEquals(results[0]['reports'][0].has_key(field), True)
 
+    @unittest.skip("not implemented yet")
     def test_reports_presidental(self):
-        results = self._results('/total/C00347583')
+        results = self._results('/committee/C00347583/reports')
 
         fields = ('refunds_political_party_committee_contributions_period', 'other_receipts_period', 'total_disbursements_period', 'net_contributions_year', 'beginning_image_number', 'total_receipts_year', 'total_receipts', 'refunds_political_party_committee_contributions_year', 'total_loans_period', 'other_political_committee_contributions_year', 'loan_repayments_other_loans_period', 'net_contributions_period', 'refunds_other_political_committee_contributions_period', 'all_other_loans_year', 'net_operating_expenditures_period', 'loan_repayments_other_loans_year', 'total_individual_itemized_contributions_year', 'subtotal_period', 'other_receipts_year', 'total_contribution_refunds_col_total_period', 'debts_owed_by_committee', 'total_contribution_refunds_year', 'offsets_to_operating_expenditures_period', 'cash_on_hand_beginning_period', 'individual_itemized_contributions_period', 'refunds_individual_contributions_year', 'total_contributions_year', 'operating_expenditures_period', 'political_party_committee_contributions_year', 'total_individual_contributions_year', 'total_individual_unitemized_contributions_year', 'net_operating_expenditures_year', 'expire_date', 'individual_unitemized_contributions_period', 'transfers_to_other_authorized_committee_year', 'report_type', 'total_disbursements_year', 'type', 'operating_expenditures_year', 'transfers_from_other_authorized_committee_period', 'total_offsets_to_operating_expenditures_year', 'total_loan_repayments_year', 'candidate_contribution_year', 'refunds_other_political_committee_contributions_year', 'debts_owed_to_committee', 'other_disbursements_year', 'total_loan_repayments_period', 'candidate_contribution_period', 'transfers_to_other_authorized_committee_period', 'refunds_total_contributions_col_total_year', 'total_contributions_column_total_period', 'political_party_committee_contributions_period', 'cash_on_hand_end_period', 'all_other_loans_period', 'loans_made_by_candidate_year', 'total_individual_contributions_period', 'loans_made_by_candidate_period', 'total_offsets_to_operating_expenditures_period', 'offsets_to_operating_expenditures_year', 'total_contribution_refunds_period', 'report_year', 'total_loans_year', 'transfers_from_other_authorized_committee_year', 'load_date', 'other_disbursements_period', 'loan_repayments_candidate_loans_period', 'other_political_committee_contributions_period', 'total_receipts_period', 'total_contributions_period', 'end_image_number', 'refunds_individual_contributions_period', 'loan_repayments_candidate_loans_year', 'total_operating_expenditures_year', 'total_operating_expenditures_period', 'report_type_full', 'election_cycle',
             )
@@ -370,34 +352,31 @@ class OverallTest(ApiBaseTest):
             print field
             self.assertEquals(results[0]['reports'][0].has_key(field), True)
 
+    @unittest.skip("Not implementing for now.")
     def test_total_field_filter(self):
-        results_disbursements = self._results('/total?committee_id=C00347583&fields=disbursements')
-        results_recipts = self._results('/total/C00347583?fields=total_receipts_period')
+        results_disbursements = self._results('/committee/C00347583/totals?fields=disbursements')
+        results_recipts = self._results('/committee/C00347583/totals?fields=total_receipts_period')
 
         self.assertIn('disbursements', results_disbursements[0]['totals'][0])
         self.assertIn('total_receipts_period',results_recipts[0]['reports'][0])
         self.assertNotIn('reports', results_disbursements[0])
         self.assertNotIn('totals', results_recipts[0])
 
+    @unittest.skip("Not implementing for now.")
     def test_total_cycle(self):
-        results = self._results('/total/C00000422?fields=cash_on_hand_end_period,disbursements')[0]
-        print results
-        reports_all = len(results['reports'])
-        totals_all = len(results['totals'])
+        results1 = self._results('/committee/C00000422/totals?year=2004')
+        total_receipts1 = results1[0]['receipts']
 
-        results_after = self._results('/total/C00000422?fields=cash_on_hand_end_period,disbursements&election_cycle=2008')[0]
-        print results_after
-        reports_04 = len(results_after['reports'])
-        totals_04 = len(results_after['totals'])
+        results2 = self._results('/committee/C00000422/totals?year=2006')
+        total_receipts2 = results2[0]['receipts']
 
-        self.assertGreater(reports_all, reports_04)
-        self.assertGreater(totals_all, totals_04)
+        self.assertGreater(total_receipts2, total_receipts1)
 
+    @unittest.skip("Not implementing for now.")
     def test_multiple_committee(self):
         results = self._results('/total?committee_id=C00002600,C00000422&fields=committtee_id')
         print len(results)
         self.assertEquals(len(results), 2)
-
 
 
     # Typeahead name search

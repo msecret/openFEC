@@ -4,7 +4,7 @@ import glob
 
 import json
 
-everything = []
+everything = {}
 
 def load_house_senate(data):
     candidates = []
@@ -13,6 +13,7 @@ def load_house_senate(data):
     s_candidates = []
     results = data['results']
     year = data['election_year']
+    everything[year] = {}
 
     for line in results:
         kind = None
@@ -27,7 +28,7 @@ def load_house_senate(data):
                     candidate_key = key
 
             # identifying totals
-            elif "TOTAL" in key:
+            if "TOTAL" in key:
                 # identifying state totals
                 if type(line[key]) is unicode:
                     if 'STATE' in line[key].upper():
@@ -38,24 +39,38 @@ def load_house_senate(data):
                     if 'DISTRICT' in line[key].upper() or 'D' == line[key]:
                         kind = 'district'
                         real_district_key = key
+                    if 'SENATE' in line[key].upper():
+                        kind = 'district'
+                        real_district_key = key
 
                     # party totals
                     if 'PARTY' in line[key].upper():
                         kind = 'party total'
+
+            if "FEC ID" in key:
+                id_key = key
+
+            if "RUNOFF" in key and '%' not in key:
+                runoff_key = key
 
 
 
         # needed for the different categories
         state = line['STATE']
         if 'DISTRICT' in line:
-            district = line['DISTRICT']
+            dist= line['DISTRICT']
         else:
-            district = line['D']
+            dist = line['D']
 
         if 'PRIMARY VOTES' in line:
             primary = line['PRIMARY VOTES']
         if 'PRIMARY' in line:
             primary = line['PRIMARY']
+        if primary == 'Unopposed':
+            primary = ''
+            unopposed_primary = True
+        else:
+            unopposed_primary = False
 
 
         if 'GENERAL VOTES ' in line:
@@ -66,48 +81,70 @@ def load_house_senate(data):
             general = line['GENERAL']
         if 'GENERAL ' in line:
             general = line['GENERAL ']
+        if general == 'Unopposed':
+            general = ''
+            unopposed_general = True
+        else:
+            unopposed_general = False
 
+        if runoff_key:
+            runoff = line[runoff_key]
+            other = ['Combined Parties', 'Combined Parties:', 'Combined Parties: ', 'n/a']
+            if runoff in other:
+                runoff = ''
+
+        # create
         if kind == 'district':
-            district = {
+            district_record = {
                 'state': state,
-                'district': district,
+                'district': dist,
                 'general': general,
                 'primary': primary,
+                'runoff': runoff,
                 'year':year
             }
-            districts.append(district)
+            districts.append(district_record)
 
         if kind == 'candidate':
+            # just going to take the valid keys
+            if len(line[id_key]) == 9:
+                fec_id = line[id_key]
+            else:
+                fec_id = None
+
             candidate = {
                 'name': line[candidate_key],
                 'state': state,
                 'general': general,
                 'primary': primary,
-                'year':year
+                'year':year,
+                'candidate_id': fec_id,
+                'unopposed_general': unopposed_general,
+                'unopposed_primary': unopposed_primary
             }
 
-            if type(district) == unicode and "S" in district:
+            if type(dist) == unicode and "S" in dist:
                 candidate['office'] = 'Senate'
                 s_candidates.append(candidate)
                 candidates.append(candidate)
             else:
-                if district == 'H':
-                    # total votes for a house in a Pennsylvania in 2008
+                if dist == 'H':
+                    # total votes for a house
                     pass
                 else:
-                    if district and len(str(district)) > 2:
-                        district = str(district)[:2]
-                    candidate['district'] = int(district)
-
+                    if dist and len(str(dist)) > 2:
+                        dist = str(dist)[:2]
+                    candidate['district'] = int(dist)
                     candidate['office'] = 'House'
                     h_candidates.append(candidate)
                     candidates.append(candidate)
 
-
     # testing
-    everything.append(districts)
-    everything.append(h_candidates)
-    everything.append(s_candidates)
+    everything[year]['districts'] = districts
+    everything[year]['house'] = h_candidates
+    everything[year]['senate'] = s_candidates
+
+    print h_candidates
 
 
 for file_name in glob.glob("data/*.json"):
@@ -116,6 +153,7 @@ for file_name in glob.glob("data/*.json"):
     data = json.load(json_data)
     load_house_senate(data)
 
-# print everything
+
+
 
 

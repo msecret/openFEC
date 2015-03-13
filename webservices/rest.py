@@ -48,6 +48,7 @@ from flask.ext.restful import reqparse
 import flask.ext.restful.representations.json
 from json_encoding import TolerantJSONEncoder
 import sqlalchemy as sa
+from flask.ext.basicauth import BasicAuth
 
 from db import db_conn, as_dicts
 from candidates.resources import CandidateResource
@@ -59,6 +60,7 @@ from webservices.resources.candidates import CandidateList, CandidateView
 from webservices.resources.totals import TotalsView
 from webservices.resources.reports import ReportsView
 from webservices.resources.committees import CommitteeList, CommitteeView
+from local_vars import USERNAME, PASSWORD
 
 speedlogger = logging.getLogger('speed')
 speedlogger.setLevel(logging.CRITICAL)
@@ -78,6 +80,13 @@ def sqla_conn_string():
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqla_conn_string()
+
+app.config['BASIC_AUTH_USERNAME'] = USERNAME
+app.config['BASIC_AUTH_PASSWORD'] = PASSWORD
+app.config['BASIC_AUTH_FORCE'] = True
+
+basic_auth = BasicAuth(app)
+
 api = restful.Api(app)
 db.init_app(app)
 
@@ -122,12 +131,12 @@ class Help(restful.Resource):
     def get(self):
         result = {'doc': sys.modules[__name__].__doc__,
                   'endpoints': {}}
-        for cls in (CandidateList, CommitteeSearch):
-            name = cls.__name__[:-6].lower()
-            result['endpoints'][name] = {
-                'arguments supported': {a.name: a.help
-                                        for a in sorted(cls.parser.args)}
-            }
+        # for cls in (CandidateList):
+        #     name = cls.__name__[:-6].lower()
+        #     result['endpoints'][name] = {
+        #         'arguments supported': {a.name: a.help
+        #                                 for a in sorted(cls.parser.args)}
+        #     }
         return result
 
 api.add_resource(Help, '/')

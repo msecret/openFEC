@@ -51,8 +51,6 @@ import sqlalchemy as sa
 from flask.ext.basicauth import BasicAuth
 
 from db import db_conn, as_dicts
-from candidates.resources import CandidateResource
-# from committees.resources import CommitteeResource
 from resources import Searchable
 from totals.resources import TotalResource, TotalSearch
 from webservices.common.models import db
@@ -148,6 +146,5 @@ api.add_resource(TotalsView, '/committee/<string:id>/totals')
 api.add_resource(ReportsView, '/committee/<string:id>/reports')
 api.add_resource(NameSearch, '/names')
 # TODO later: remove routes below this line, which are deprecated or for debugging
-api.add_resource(CandidateResource, '/oldcandidate/<string:id>')
 api.add_resource(TotalSearch, '/total')
 api.add_resource(TotalResource, '/total/<string:id>')
